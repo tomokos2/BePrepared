@@ -1,0 +1,2 @@
+// Call fetch("path")
+// .then =>
