@@ -12,6 +12,7 @@ import {
   StyleSheet,
   ScrollView,
   Button,
+  Platform,
   View,
   Text,
   StatusBar,
@@ -26,6 +27,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import GetWeather from './services/Weather.js';
+import requestLocationPermission from './services/LocationPermission.js';
 
 const App: () => React$Node = () => {
   return (
@@ -41,10 +43,11 @@ const App: () => React$Node = () => {
               <Text style={styles.footer}>Engine: Hermes</Text>
             </View>
           )}
-          <Button onpress={GetWeather()} title="Click" />
+          <Button onPress={() => GetWeather()} title="Click" />
+          <Button onPress={requestLocationPermission} title="Location prompt" />
           <View style={styles.body}>
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
+              <Text style={styles.sectionTitle}>{Platform.Version}</Text>
               <Text style={styles.sectionDescription}>
                 Edit <Text style={styles.highlight}>App.js</Text> to change this
                 screen and then come back to see your edits.
