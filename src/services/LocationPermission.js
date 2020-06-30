@@ -14,7 +14,7 @@ const requestLocationPermission = async () => {
 
     // Async wait until the user clicks a resposne
     const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       rationale,
     );
 
