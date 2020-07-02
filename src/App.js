@@ -31,6 +31,33 @@ import requestLocationPermission from './services/LocationPermission.js';
 import GetLocation from './services/GetLocation.js';
 
 class App extends React.Component {
+  // state = {
+  //   hasLocationPermission: false,
+  //   // Default lat long is chicago
+  //   lat: 41.8781,
+  //   long: -87.623177,
+  //   weather: null,
+  //   forecast: null,
+  // };
+
+  // componenetDidMount() {
+  //   let canAccess = requestLocationPermission();
+  //   let
+  // }
+
+  // setState(weatherData) {
+  //   this.setState({
+  //     weather: weatherData,
+  //   });
+
+  //   let forecast = this.state.weather.hourly;
+  //   return forecast.map(hour => {
+  //     <Text>
+  //       Date: {hour.dt}, Temp: {hour.temp}
+  //     </Text>;
+  //   });
+  // }
+
   constructor() {
     super();
     this.state = {
@@ -52,6 +79,16 @@ class App extends React.Component {
     });
   };
 
+  setWeather = () => {
+    GetWeather(this.lat, this.long).then(data => {
+      console.log('-----------------------------------------');
+      console.log(data);
+      this.setState(() => ({
+        hourlyWeather: data.hourly,
+      }));
+    });
+  };
+
   componentDidMount() {
     requestLocationPermission().then(result => this.setPermission(result));
   }
@@ -62,32 +99,27 @@ class App extends React.Component {
     }));
   };
 
-  addCount = () => {
-    this.setState(prevState => ({
-      counter: prevState.counter + 1,
-    }));
-  };
-
-  addNew = () => {
-    this.setState(() => ({
-      newCounter: 0,
-    }));
-  };
-
   render() {
+    const hourList = this.state.hourlyWeather.map(hour => {
+      return (
+        <Text key={hour.dt}>
+          Date: {hour.dt}, Temp: {hour.temp}
+        </Text>
+      );
+    });
     return (
       <>
         <SafeAreaView>
-          <Button onPress={this.addCount} title="Click" />
-          <Button onPress={this.addNew} title="new click" />
           <Button onPress={this.setLatLong} title="Print location" />
+          <Button onPress={this.setWeather} title="Give me WEather" />
           <Text>
             Lat: {this.state.lat}, Long: {this.state.long}
           </Text>
-          <Text>{this.state.counter}</Text>
-          <Text>This is unchanging {this.state.num}</Text>
-          <Text>This is unchanging {this.state.newCounter}</Text>
           <Text>This is permission {this.state.canAccessLoc.toString()}</Text>
+          <ScrollView>
+            {hourList}
+            <Text>WEather shoudl behere </Text>
+          </ScrollView>
         </SafeAreaView>
       </>
     );
