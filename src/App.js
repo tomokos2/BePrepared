@@ -28,56 +28,89 @@ import {
 
 import GetWeather from './services/Weather.js';
 import requestLocationPermission from './services/LocationPermission.js';
+import Geolocation from 'react-native-geolocation-service';
 
-const App: () => React$Node = () => {
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <Button onPress={() => GetWeather()} title="Click" />
-          <Button onPress={requestLocationPermission} title="Location prompt" />
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>{Platform.Version}</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
-};
+class App extends React.Component {
+  // state = {
+  //   hasLocationPermission: false,
+  //   // Default lat long is chicago
+  //   lat: 41.8781,
+  //   long: -87.623177,
+  //   weather: null,
+  //   forecast: null,
+  // };
+
+  // componenetDidMount() {
+  //   let canAccess = requestLocationPermission();
+  //   let
+  // }
+
+  // printLocation() {
+  //   if (this.state.hasLocationPermission) {
+  //     Geolocation.getCurrentPosition(
+  //       position => {
+  //         console.log(position);
+  //       },
+  //       error => {
+  //         // See error code charts below.
+  //         console.log(error.code, error.message);
+  //       },
+  //       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+  //     );
+  //   }
+  // }
+
+  // setState(weatherData) {
+  //   this.setState({
+  //     weather: weatherData,
+  //   });
+
+  //   let forecast = this.state.weather.hourly;
+  //   return forecast.map(hour => {
+  //     <Text>
+  //       Date: {hour.dt}, Temp: {hour.temp}
+  //     </Text>;
+  //   });
+  // }
+
+  constructor() {
+    super();
+    this.state = {
+      canAccessLoc: false,
+      counter: 0,
+      num: 2,
+    };
+  }
+
+  componentDidMount() {
+    requestLocationPermission().then(result => this.setPermission(result));
+  }
+
+  setPermission = result => {
+    this.setState(() => ({
+      canAccessLoc: result,
+    }));
+  };
+
+  addCount = () => {
+    this.setState(prevState => ({
+      counter: prevState.counter + 1,
+    }));
+  };
+
+  render() {
+    return (
+      <>
+        <SafeAreaView>
+          <Button onPress={this.addCount} title="Click" />
+          <Text>{this.state.counter}</Text>
+          <Text>This is unchanging {this.state.num}</Text>
+          <Text>This is permission {this.state.canAccessLoc.toString()}</Text>
+        </SafeAreaView>
+      </>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   scrollView: {

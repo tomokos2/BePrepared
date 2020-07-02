@@ -1,8 +1,16 @@
-const API_URL =
-  'http://api.openweathermap.org/data/2.5/forecast?id=524901&APPID=e29c191314bd71dd940ebc204eedfb1b';
+let latitude = '41.8781';
+let longitude = '-87.6298';
 
-export default async function GetWeather() {
+const API_URL = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely&appid=e29c191314bd71dd940ebc204eedfb1b`;
+
+export default async function GetWeather(lat, long) {
+  if (lat && long) {
+    latitude = lat;
+    longitude = long;
+  }
+  console.log(API_URL);
   const response = await fetch(API_URL);
   const data = await response.json();
-  console.log(data);
+  console.log(data.hourly);
+  return data;
 }
