@@ -18,46 +18,13 @@ import {
   StatusBar,
 } from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import GetWeather from './services/Weather.js';
 import requestLocationPermission from './services/LocationPermission.js';
 import GetLocation from './services/GetLocation.js';
 
 class App extends React.Component {
-  // state = {
-  //   hasLocationPermission: false,
-  //   // Default lat long is chicago
-  //   lat: 41.8781,
-  //   long: -87.623177,
-  //   weather: null,
-  //   forecast: null,
-  // };
-
-  // componenetDidMount() {
-  //   let canAccess = requestLocationPermission();
-  //   let
-  // }
-
-  // setState(weatherData) {
-  //   this.setState({
-  //     weather: weatherData,
-  //   });
-
-  //   let forecast = this.state.weather.hourly;
-  //   return forecast.map(hour => {
-  //     <Text>
-  //       Date: {hour.dt}, Temp: {hour.temp}
-  //     </Text>;
-  //   });
-  // }
-
   constructor() {
     super();
     this.state = {
@@ -81,8 +48,6 @@ class App extends React.Component {
 
   setWeather = () => {
     GetWeather(this.lat, this.long).then(data => {
-      console.log('-----------------------------------------');
-      console.log(data);
       this.setState(() => ({
         hourlyWeather: data.hourly,
       }));

@@ -11,6 +11,5 @@ export default async function GetWeather(lat, long) {
   console.log(API_URL);
   const response = await fetch(API_URL);
   const data = await response.json();
-  console.log(data.hourly);
   return data;
 }
