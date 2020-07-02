@@ -20,10 +20,8 @@ const requestLocationPermission = async () => {
 
     // Take response and do things accordingly
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('Location access granted');
       return true;
     } else {
-      console.log('Location access denied');
       return false;
     }
   } catch (err) {
