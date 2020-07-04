@@ -6,6 +6,8 @@
  * @flow strict-local
  */
 
+import 'react-native-gesture-handler';
+
 import React from 'react';
 import {
   SafeAreaView,
@@ -19,6 +21,8 @@ import {
   StatusBar,
 } from 'react-native';
 
+import {NavigationContainer} from '@react-navigation/native';
+
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import GetWeather from './services/Weather.js';
@@ -31,10 +35,14 @@ class App extends React.Component {
     this.state = {
       canAccessLoc: false,
       hourlyWeather: [],
+      dailyWeather: [],
       // Default lat long is chicago
       lat: 41.8781,
       long: -87.623177,
     };
+
+    requestLocationPermission().then(result => this.setPermission(result));
+    this.setWeather();
   }
 
   setLatLong = () => {
@@ -51,17 +59,22 @@ class App extends React.Component {
     return new Date(unix * 1000).toLocaleTimeString('en-US').substr(0, 5);
   };
 
+  formatDate = unix => {
+    return new Date(unix * 1000).toLocaleDateString('en-US');
+  };
+
   setWeather = () => {
     GetWeather(this.lat, this.long).then(data => {
       this.setState(() => ({
         hourlyWeather: data.hourly,
+        dailyWeather: data.daily,
       }));
     });
   };
 
-  componentDidMount() {
-    requestLocationPermission().then(result => this.setPermission(result));
-  }
+  // componentDidMount() {
+
+  // }
 
   setPermission = result => {
     this.setState(() => ({
@@ -76,10 +89,12 @@ class App extends React.Component {
           <Text style={styles.sectionDescription}>
             {this.formatTime(hour.dt)}
           </Text>
-          <Text>{hour.weather.description}</Text>
+          <Text>{hour.weather[0].description}</Text>
           <Image
             source={{
-              uri: `http://openweathermap.org/img/wn/10d.png`,
+              uri: `http://openweathermap.org/img/wn/${
+                hour.weather[0].icon
+              }@2x.png`,
             }}
             style={styles.image}
           />
@@ -87,27 +102,60 @@ class App extends React.Component {
         </View>
       );
     });
-    return (
-      <>
-        <SafeAreaView>
-          <Button onPress={this.setLatLong} title="Print location" />
-          <Button onPress={this.setWeather} title="Give me WEather" />
-          <Text>
-            Lat: {this.state.lat}, Long: {this.state.long}
+    const dayList = this.state.dailyWeather.map(day => {
+      return (
+        <View style={styles.weatherBox} key={day.dt}>
+          <Text style={styles.sectionDescription}>
+            {this.formatDate(day.dt)}
           </Text>
-          <Text>This is permission {this.state.canAccessLoc.toString()}</Text>
-          <Text style={styles.sectionTitle}>Hourly Weather</Text>
-          <ScrollView horizontal>
-            <View>
-              <Text style={styles.sectionDescription}>Time:</Text>
-              <View style={styles.box} />
-              <Text style={styles.sectionDescription}>Temp:</Text>
-            </View>
-            <View style={styles.pad} />
-            {hourList}
-          </ScrollView>
-        </SafeAreaView>
-      </>
+          <Text>{day.weather[0].description}</Text>
+          <Image
+            source={{
+              uri: `http://openweathermap.org/img/wn/${
+                day.weather[0].icon
+              }@2x.png`,
+            }}
+            style={styles.image}
+          />
+          <Text style={styles.sectionDescription}>Min: {day.temp.min} °F</Text>
+          <Text style={styles.sectionDescription}>Max: {day.temp.max} °F</Text>
+          <Text style={styles.sectionDescription}>Midday: {day.temp.day} °F</Text>
+        </View>
+      );
+    });
+    return (
+      <NavigationContainer>
+        <View style={{backgroundColor: '#C1D6C9'}}>
+          <SafeAreaView>
+            <Button onPress={this.setLatLong} title="Print location" />
+            <Button onPress={this.setWeather} title="Give me WEather" />
+            <Text>
+              Lat: {this.state.lat}, Long: {this.state.long}
+            </Text>
+            <Text>This is permission {this.state.canAccessLoc.toString()}</Text>
+            <Text style={styles.sectionTitle}>Hourly Weather</Text>
+            <ScrollView horizontal>
+              <View>
+                <Text style={styles.sectionDescription}>Time:</Text>
+                <View style={styles.box} />
+                <Text style={styles.sectionDescription}>Temp:</Text>
+              </View>
+              <View style={styles.pad} />
+              {hourList}
+            </ScrollView>
+            <Text style={styles.sectionTitle}>Weekly Weather</Text>
+            <ScrollView horizontal>
+              <View>
+                <Text style={styles.sectionDescription}>Time:</Text>
+                <View style={styles.box} />
+                <Text style={styles.sectionDescription}>Temp:</Text>
+              </View>
+              <View style={styles.pad} />
+              {dayList}
+            </ScrollView>
+          </SafeAreaView>
+        </View>
+      </NavigationContainer>
     );
   }
 }
