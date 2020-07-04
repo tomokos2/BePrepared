@@ -13,6 +13,7 @@ import {
   ScrollView,
   Button,
   Platform,
+  Image,
   View,
   Text,
   StatusBar,
@@ -46,6 +47,10 @@ class App extends React.Component {
     });
   };
 
+  formatTime = unix => {
+    return new Date(unix * 1000).toLocaleTimeString('en-US').substr(0, 5);
+  };
+
   setWeather = () => {
     GetWeather(this.lat, this.long).then(data => {
       this.setState(() => ({
@@ -67,9 +72,19 @@ class App extends React.Component {
   render() {
     const hourList = this.state.hourlyWeather.map(hour => {
       return (
-        <Text key={hour.dt}>
-          Date: {hour.dt}, Temp: {hour.temp}
-        </Text>
+        <View style={styles.weatherBox} key={hour.dt}>
+          <Text style={styles.sectionDescription}>
+            {this.formatTime(hour.dt)}
+          </Text>
+          <Text>{hour.weather.description}</Text>
+          <Image
+            source={{
+              uri: `http://openweathermap.org/img/wn/10d.png`,
+            }}
+            style={styles.image}
+          />
+          <Text style={styles.sectionDescription}>{hour.temp} °F</Text>
+        </View>
       );
     });
     return (
@@ -81,9 +96,15 @@ class App extends React.Component {
             Lat: {this.state.lat}, Long: {this.state.long}
           </Text>
           <Text>This is permission {this.state.canAccessLoc.toString()}</Text>
-          <ScrollView>
+          <Text style={styles.sectionTitle}>Hourly Weather</Text>
+          <ScrollView horizontal>
+            <View>
+              <Text style={styles.sectionDescription}>Time:</Text>
+              <View style={styles.box} />
+              <Text style={styles.sectionDescription}>Temp:</Text>
+            </View>
+            <View style={styles.pad} />
             {hourList}
-            <Text>WEather shoudl behere </Text>
           </ScrollView>
         </SafeAreaView>
       </>
@@ -92,8 +113,15 @@ class App extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  weatherBox: {
+    width: 80,
+  },
+  pad: {
+    width: 20,
+  },
   scrollView: {
     backgroundColor: Colors.lighter,
+    marginVertical: 10,
   },
   engine: {
     position: 'absolute',
@@ -101,6 +129,13 @@ const styles = StyleSheet.create({
   },
   body: {
     backgroundColor: Colors.white,
+  },
+  box: {
+    height: 58,
+  },
+  image: {
+    width: 40,
+    height: 40,
   },
   sectionContainer: {
     marginTop: 32,
